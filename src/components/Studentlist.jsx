@@ -1,0 +1,380 @@
+import React, { useState } from "react";
+
+const Studentlist = ({ updatedData = [], setUpdatedData }) => {
+  const [editingId, setEditingId] = useState(null);
+  const [editForm, setEditForm] = useState({});
+
+  const handleEditClick = (student) => {
+    setEditingId(student.id);
+    setEditForm({ ...student });
+  };
+
+  const handleEditChange = (e) => {
+    setEditForm({ ...editForm, [e.target.name]: e.target.value });
+  };
+
+  const handleSave = (id) => {
+    setUpdatedData(updatedData.map((s) => (s.id === id ? { ...editForm } : s)));
+    setEditingId(null);
+  };
+
+  const handleCancel = () => {
+    setEditingId(null);
+    setEditForm({});
+  };
+
+  const handleDelete = (id) => {
+    setUpdatedData(updatedData.filter((s) => s.id !== id));
+  };
+
+  const fields = [
+    { key: "studentname", label: "Student Name", type: "text" },
+    { key: "dateofbirth", label: "Date of Birth", type: "date" },
+    { key: "fathername", label: "Father Name", type: "text" },
+    { key: "mothername", label: "Mother Name", type: "text" },
+    { key: "mobilenumber", label: "Mobile", type: "tel" },
+    { key: "aadharcard", label: "Aadhar", type: "text" },
+    { key: "email", label: "Email", type: "email" },
+  ];
+
+  return (
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500&display=swap');
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        .sl-page {
+          min-height: 100vh;
+          background: #f0f4f8;
+          background-image:
+            radial-gradient(ellipse at 20% 20%, rgba(30, 80, 160, 0.07) 0%, transparent 60%),
+            radial-gradient(ellipse at 80% 80%, rgba(14, 120, 90, 0.06) 0%, transparent 60%);
+          font-family: 'DM Sans', sans-serif;
+          padding: 40px 16px 60px;
+        }
+
+        /* HEADER */
+        .sl-header { text-align: center; margin-bottom: 36px; }
+        .sl-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 10px;
+          background: #1a3a6b;
+          color: #fff;
+          padding: 8px 20px;
+          border-radius: 40px;
+          font-size: 12px;
+          letter-spacing: 2px;
+          text-transform: uppercase;
+          font-weight: 500;
+          margin-bottom: 16px;
+        }
+        .sl-header h1 {
+          font-family: 'Playfair Display', serif;
+          font-size: clamp(26px, 5vw, 38px);
+          color: #0f2045;
+          font-weight: 700;
+        }
+        .sl-header p { margin-top: 8px; color: #6b7c9a; font-size: 14px; font-weight: 300; }
+
+        /* CARD */
+        .sl-card {
+          background: #ffffff;
+          border-radius: 20px;
+          box-shadow: 0 4px 30px rgba(15, 32, 69, 0.08), 0 1px 4px rgba(15,32,69,0.04);
+          overflow: hidden;
+        }
+        .sl-card-top {
+          background: linear-gradient(135deg, #1a3a6b 0%, #0f2045 100%);
+          padding: 20px 28px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          flex-wrap: wrap;
+          gap: 12px;
+          border-bottom: 3px solid #c9a84c;
+        }
+        .sl-card-top h2 {
+          font-family: 'Playfair Display', serif;
+          color: #f5e6c0;
+          font-size: 18px;
+          font-weight: 600;
+        }
+        .sl-count {
+          background: rgba(201, 168, 76, 0.15);
+          border: 1px solid rgba(201, 168, 76, 0.4);
+          color: #c9a84c;
+          padding: 4px 16px;
+          border-radius: 20px;
+          font-size: 13px;
+          font-weight: 500;
+        }
+
+        /* EMPTY */
+        .sl-empty { text-align: center; padding: 64px 20px; color: #6b7c9a; }
+        .sl-empty .icon { font-size: 48px; margin-bottom: 16px; }
+        .sl-empty h3 { font-family: 'Playfair Display', serif; font-size: 20px; color: #0f2045; margin-bottom: 6px; }
+        .sl-empty p { font-size: 14px; font-weight: 300; }
+
+        /* BUTTONS */
+        .btn-edit, .btn-delete, .btn-save, .btn-cancel {
+          display: inline-flex; align-items: center; gap: 4px;
+          padding: 6px 14px; border-radius: 8px; font-size: 12px;
+          font-weight: 500; font-family: 'DM Sans', sans-serif;
+          cursor: pointer; border: none; transition: all 0.18s; white-space: nowrap;
+        }
+        .btn-edit {
+          background: rgba(26, 58, 107, 0.08);
+          color: #1a3a6b;
+          border: 1.5px solid rgba(26, 58, 107, 0.25);
+        }
+        .btn-edit:hover { background: rgba(26, 58, 107, 0.15); transform: translateY(-1px); }
+
+        .btn-delete {
+          background: rgba(197, 48, 48, 0.07);
+          color: #c53030;
+          border: 1.5px solid rgba(197, 48, 48, 0.2);
+        }
+        .btn-delete:hover { background: rgba(197, 48, 48, 0.14); transform: translateY(-1px); }
+
+        .btn-save {
+          background: #1a3a6b;
+          color: #f5e6c0;
+          border: 1.5px solid #1a3a6b;
+        }
+        .btn-save:hover { background: #0f2045; border-color: #0f2045; }
+
+        .btn-cancel {
+          background: #fff;
+          color: #6b7c9a;
+          border: 1.5px solid #dde3ee;
+        }
+        .btn-cancel:hover { background: #f0f4f8; color: #1a2340; }
+
+        .action-wrap { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+
+        /* EDIT INPUT */
+        .sl-edit-input {
+          width: 100%;
+          padding: 7px 10px;
+          border: 1.5px solid #c9a84c;
+          border-radius: 8px;
+          font-family: 'DM Sans', sans-serif;
+          font-size: 13px;
+          color: #1a2340;
+          background: #fffdf5;
+          outline: none;
+          transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .sl-edit-input:focus {
+          border-color: #1a3a6b;
+          box-shadow: 0 0 0 3px rgba(26, 58, 107, 0.08);
+          background: #fff;
+        }
+
+        /* DESKTOP TABLE */
+        .sl-table-wrap { overflow-x: auto; display: block; }
+        .sl-cards-wrap { display: none; }
+
+        .sl-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        .sl-table thead tr { background: #f0f4f8; border-bottom: 2px solid #dde3ee; }
+        .sl-table thead th {
+          padding: 14px 18px; text-align: left;
+          font-size: 11px; letter-spacing: 1.5px;
+          text-transform: uppercase; color: #1a3a6b; font-weight: 600; white-space: nowrap;
+        }
+        .sl-table tbody tr { border-bottom: 1px solid #edf0f7; transition: background 0.2s; }
+        .sl-table tbody tr:nth-child(even) { background: #f8fafd; }
+        .sl-table tbody tr:hover { background: #e8eef8; }
+        .sl-table tbody tr.editing-row { background: #fffdf0 !important; border-left: 3px solid #c9a84c; }
+        .sl-table tbody td { padding: 13px 18px; color: #1a2340; white-space: nowrap; vertical-align: middle; }
+        .sl-sno { color: #6b7c9a !important; font-size: 13px !important; font-weight: 500; }
+
+        /* MOBILE CARDS */
+        @media (max-width: 767px) {
+          .sl-table-wrap { display: none; }
+          .sl-cards-wrap { display: flex; flex-direction: column; }
+
+          .sl-mobile-card {
+            border-bottom: 1px solid #edf0f7;
+            padding: 16px 20px;
+            transition: background 0.2s;
+          }
+          .sl-mobile-card:last-child { border-bottom: none; }
+          .sl-mobile-card.editing-card { background: #fffdf0; border-left: 3px solid #c9a84c; }
+
+          .sl-mc-header {
+            display: flex; align-items: center;
+            justify-content: space-between; margin-bottom: 12px;
+          }
+          .sl-mc-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 16px; font-weight: 600; color: #0f2045; flex: 1;
+          }
+          .sl-mc-sno {
+            font-size: 11px; color: #6b7c9a;
+            font-weight: 500; margin-left: 10px;
+          }
+
+          .sl-mc-grid {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 10px 14px; margin-bottom: 14px;
+          }
+          .sl-mc-field { display: flex; flex-direction: column; gap: 3px; }
+          .sl-mc-label {
+            font-size: 10px; letter-spacing: 1.5px;
+            text-transform: uppercase; color: #1a3a6b; font-weight: 600;
+          }
+          .sl-mc-value { font-size: 13px; color: #1a2340; word-break: break-all; }
+          .sl-mc-field.full { grid-column: 1 / -1; }
+          .sl-mc-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+        }
+
+        @media (max-width: 400px) {
+          .sl-mc-grid { grid-template-columns: 1fr; }
+          .sl-page { padding: 28px 12px 50px; }
+        }
+      `}</style>
+
+      <div className="sl-page">
+        {/* Header */}
+        <div className="sl-header">
+          <div className="sl-badge">🎓 School Management System</div>
+          <h1>Student List</h1>
+          <p>View, edit and manage all registered students</p>
+        </div>
+
+        {/* Card */}
+        <div className="sl-card">
+          <div className="sl-card-top">
+            <h2>All Students</h2>
+            <span className="sl-count">Total: {updatedData.length}</span>
+          </div>
+
+          {updatedData.length === 0 ? (
+            <div className="sl-empty">
+              <div className="icon">🎓</div>
+              <h3>No Students Found</h3>
+              <p>Please add students to see them listed here.</p>
+            </div>
+          ) : (
+            <>
+              {/* DESKTOP TABLE */}
+              <div className="sl-table-wrap">
+                <table className="sl-table">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      {fields.map((f) => <th key={f.key}>{f.label}</th>)}
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {updatedData.map((student, index) => {
+                      const isEditing = editingId === student.id;
+                      return (
+                        <tr key={student.id} className={isEditing ? "editing-row" : ""}>
+                          <td className="sl-sno">{index + 1}</td>
+                          {fields.map((f) => (
+                            <td key={f.key}>
+                              {isEditing ? (
+                                <input
+                                  className="sl-edit-input"
+                                  type={f.type}
+                                  name={f.key}
+                                  value={editForm[f.key] || ""}
+                                  onChange={handleEditChange}
+                                />
+                              ) : (
+                                student[f.key] || "—"
+                              )}
+                            </td>
+                          ))}
+                          <td>
+                            <div className="action-wrap">
+                              {isEditing ? (
+                                <>
+                                  <button className="btn-save" onClick={() => handleSave(student.id)}>✓ Save</button>
+                                  <button className="btn-cancel" onClick={handleCancel}>✕ Cancel</button>
+                                </>
+                              ) : (
+                                <>
+                                  <button className="btn-edit" onClick={() => handleEditClick(student)}>✏ Edit</button>
+                                  <button className="btn-delete" onClick={() => handleDelete(student.id)}>🗑 Delete</button>
+                                </>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* MOBILE CARDS */}
+              <div className="sl-cards-wrap">
+                {updatedData.map((student, index) => {
+                  const isEditing = editingId === student.id;
+                  return (
+                    <div key={student.id} className={`sl-mobile-card ${isEditing ? "editing-card" : ""}`}>
+                      <div className="sl-mc-header">
+                        <div className="sl-mc-name">
+                          {isEditing ? (
+                            <input className="sl-edit-input" type="text" name="studentname"
+                              value={editForm.studentname || ""} onChange={handleEditChange} placeholder="Student Name" />
+                          ) : student.studentname || "—"}
+                        </div>
+                        <span className="sl-mc-sno">#{index + 1}</span>
+                      </div>
+
+                      <div className="sl-mc-grid">
+                        {fields.filter((f) => f.key !== "studentname" && f.key !== "email").map((f) => (
+                          <div className="sl-mc-field" key={f.key}>
+                            <span className="sl-mc-label">{f.label}</span>
+                            {isEditing ? (
+                              <input className="sl-edit-input" type={f.type} name={f.key}
+                                value={editForm[f.key] || ""} onChange={handleEditChange} />
+                            ) : (
+                              <span className="sl-mc-value">{student[f.key] || "—"}</span>
+                            )}
+                          </div>
+                        ))}
+                        <div className="sl-mc-field full">
+                          <span className="sl-mc-label">Email</span>
+                          {isEditing ? (
+                            <input className="sl-edit-input" type="email" name="email"
+                              value={editForm.email || ""} onChange={handleEditChange} />
+                          ) : (
+                            <span className="sl-mc-value">{student.email || "—"}</span>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="sl-mc-actions">
+                        {isEditing ? (
+                          <>
+                            <button className="btn-save" onClick={() => handleSave(student.id)}>✓ Save</button>
+                            <button className="btn-cancel" onClick={handleCancel}>✕ Cancel</button>
+                          </>
+                        ) : (
+                          <>
+                            <button className="btn-edit" onClick={() => handleEditClick(student)}>✏ Edit</button>
+                            <button className="btn-delete" onClick={() => handleDelete(student.id)}>🗑 Delete</button>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+    </>
+  );
+};
+
+export default Studentlist;
