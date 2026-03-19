@@ -5,6 +5,7 @@ import Col from "react-bootstrap/Col";
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 import Badge from "react-bootstrap/Badge";
+import { useNavigate } from "react-router-dom";
 
 const homeStyles = `
   @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500&display=swap');
@@ -309,6 +310,13 @@ const announcements = [
 ];
 
 const Home = () => {
+  const navigate = useNavigate()
+  const handleStart = () => {
+    navigate("/login")
+  }
+  const handleMore = () => {
+    navigate("/about")
+  }
   return (
     <div className="home-page">
       <style>{homeStyles}</style>
@@ -329,8 +337,8 @@ const Home = () => {
                 parents — built to simplify every aspect of school operations.
               </p>
               <div className="d-flex flex-wrap gap-3 mt-4">
-                <Button className="hero-btn-primary">Get Started</Button>
-                <Button className="hero-btn-outline">Learn More</Button>
+                <Button onClick={handleStart} className="hero-btn-primary">Get Started</Button>
+                <Button onClick={handleMore} className="hero-btn-outline">Learn More</Button>
               </div>
             </Col>
           </Row>
@@ -417,7 +425,7 @@ const Home = () => {
           <p className="cta-subtitle">
             Join hundreds of schools already using our platform.
           </p>
-          <Button className="hero-btn-primary">Get Started Today</Button>
+          <Button onClick={handleStart} className="hero-btn-primary">Get Started Today</Button>
         </Container>
       </section>
     </div>
