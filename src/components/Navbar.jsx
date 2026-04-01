@@ -1,11 +1,10 @@
-import React, { useState } from "react";
+import React from "react";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import Container from "react-bootstrap/Container";
 import { Link, useNavigate } from "react-router-dom";
 import Button from "react-bootstrap/Button";
 import { useLocation } from "react-router-dom";
-import { useEffect } from "react";
 
 const navStyles = `
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=DM+Sans:wght@400;500&display=swap');
@@ -114,20 +113,15 @@ const navStyles = `
   `;
 
 const Navbaar = () => {
-  const [isLogin, setIsLogin] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation();
-  useEffect(() => {
-    const loginStatus = localStorage.getItem("isLogin") === "true";
-    setIsLogin(loginStatus);
-  }, [location]);
+  useLocation(); // triggers rerender on route changes
+  const isLogin = localStorage.getItem("isLogin") === "true";
   const handleLogin = () => {
     navigate("/login");
   };
 
   const handleLogout = () => {
     localStorage.setItem("isLogin", "false");
-    setIsLogin(false);
     navigate("/");
   };
   return (

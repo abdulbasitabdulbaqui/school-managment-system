@@ -2,19 +2,18 @@ import React, { useState } from "react";
 import Button from "react-bootstrap/Button";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Add = ({ setUpdatedData, updatedData, editStudent, setEditStudent }) => {
-  const [studentDetail, setStudentDetail] = useState({
-    studentname: "",
-    dateofbirth: "",
-    fathername: "",
-    mothername: "",
-    mobilenumber: "",
-    aadharcard: "",
-    email: "",
-  });
+  const [studentDetail, setStudentDetail] = useState(() => ({
+    studentname: editStudent?.studentname || "",
+    dateofbirth: editStudent?.dateofbirth || "",
+    fathername: editStudent?.fathername || "",
+    mothername: editStudent?.mothername || "",
+    mobilenumber: editStudent?.mobilenumber || "",
+    aadharcard: editStudent?.aadharcard || "",
+    email: editStudent?.email || "",
+  }));
 
   const [error, setError] = useState({
     studentname: "",
@@ -164,19 +163,6 @@ const Add = ({ setUpdatedData, updatedData, editStudent, setEditStudent }) => {
     });
     navigate("/studentlist")
   };
-  useEffect(() => {
-    if (editStudent) {
-      setStudentDetail({
-        studentname: editStudent.studentname || "",
-        dateofbirth: editStudent.dateofbirth || "",
-        fathername: editStudent.fathername || "",
-        mothername: editStudent.mothername || "",
-        mobilenumber: editStudent.mobilenumber || "",
-        aadharcard: editStudent.aadharcard || "",
-        email: editStudent.email || "",
-      });
-    }
-  }, [editStudent]);
 
   return (
     <>
