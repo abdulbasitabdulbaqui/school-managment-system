@@ -330,7 +330,7 @@ const Home = () => {
                 School Management System
               </Badge>
               <h1 className="hero-title">
-                Manage Your School <span>Smarter & Faster</span>
+                Manage Your School <span>Smarter & Fasterrrrrrr</span>
               </h1>
               <p className="hero-subtitle">
                 A complete platform for administrators, teachers, students, and
